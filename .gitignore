@@ -1,0 +1,11 @@
+*site-packages
+*site-packages/
+*.pyc
+data
+data/
+data/*
+out
+out/
+out/*
+
+
