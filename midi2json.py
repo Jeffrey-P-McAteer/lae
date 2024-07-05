@@ -1,3 +1,4 @@
+#!/usr/bin/env python
 
 import os
 import sys
@@ -68,6 +69,7 @@ if __name__ == '__main__':
             if 'Control change' in line:
               change_made = True
               controller = tokens[tokens.index('controller') + 1]
+              controller = ''.join( c for c in controller if c.isdigit() )
               value = tokens[tokens.index('value') + 1]
 
               try:
