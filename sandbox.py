@@ -7,6 +7,8 @@ import math
 import threading
 import time
 import traceback
+import json
+
 
 pkgs = os.path.join(os.path.dirname(__file__), 'sandbox-site-packages')
 os.makedirs(pkgs, exist_ok=True)
@@ -83,7 +85,7 @@ def read_midi_data_t():
           bufsize=1,
         )
         m['midi_events_proc'] = midi_events_proc
-        for line in midi_events_proc.stdout.readlines():
+        for line in midi_events_proc.stdout:
           try:
             if not isinstance(line, str):
               line = line.decode('utf-8')
@@ -92,8 +94,10 @@ def read_midi_data_t():
             print(f'{line}', flush=True)
 
             tokens = [t for t in line.split() if len(f'{t}') > 0]
-            if 'Control change' in tokens:
-              controller = tokens[tokens.index('controller') + 1]
+            if 'Control change' in line:
+              controller = tokens[tokens.index('controller') + 1].strip()
+              controller = ''.join( c for c in controller if c.isdigit() )
+
               value = tokens[tokens.index('value') + 1]
 
               try:
@@ -101,6 +105,8 @@ def read_midi_data_t():
               except:
                 m['controller'][controller] = float(value)
 
+            #print(f'm = {json.dumps(m["controller"], indent=2)}')
+            m['main_win_da'].queue_draw()
           except:
             traceback.print_exc()
 
@@ -119,6 +125,10 @@ def read_midi_data_t():
 def on_draw(w, cr, width, height, user_data=None):
   global m
   # Cr is a https://pycairo.readthedocs.io/en/latest/reference/context.html
+
+  m['x'] = int(m['controller'].get('3', 127 // 2)) - (127 // 2) # 3 is our first slider
+  m['y'] = int(m['controller'].get('4', 127 // 2)) - (127 // 2) # 4 is our 2nd
+
 
   cr.set_source_rgb(1, 1, 0)
   cr.arc(320 + m['x'], 240 + m['y'],100, 0, 2*math.pi)
@@ -146,6 +156,8 @@ def on_app_activate(app):
   #da.connect('draw', on_draw)
   da.set_draw_func(on_draw)
   win.set_child(da)
+
+  m['main_win_da'] = da
 
   win.present()
 
