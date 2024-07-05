@@ -87,6 +87,9 @@ def read_midi_data_t():
         m['midi_events_proc'] = midi_events_proc
         for line in midi_events_proc.stdout:
           try:
+            if m['want_exit']:
+              break
+
             if not isinstance(line, str):
               line = line.decode('utf-8')
             line = line.strip()
