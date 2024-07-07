@@ -132,22 +132,40 @@ def on_draw(w, cr, width, height, user_data=None):
   m['x'] = int(m['controller'].get('3', 127 // 2)) - (127 // 2) # 3 is our first slider
   m['y'] = int(m['controller'].get('4', 127 // 2)) - (127 // 2) # 4 is our 2nd
 
+  def px_func(x, y):
+    global m
+    if x > m['x'] and y > m['y']:
+      return True
+    return False
 
-  cr.set_source_rgb(1, 1, 0)
-  cr.arc(320 + m['x'], 240 + m['y'],100, 0, 2*math.pi)
-  cr.fill_preserve()
-
+  # This draws
   cr.set_source_rgb(0, 0, 0)
-  cr.stroke()
+  for img_x in range(0, 440):
+    for img_y in range(0, 440):
+      if px_func(img_x, img_y):
+        #cr.new_path()
+        #cr.move_to(img_x, img_y)
+        cr.rectangle(img_x, img_y, 1, 1)
+        cr.fill()
 
-  cr.arc(280 + m['x'], 210 + m['y'],20, 0, 2*math.pi)
-  cr.arc(360 + m['x'], 210 + m['y'],20, 0, 2*math.pi)
-  cr.fill()
 
-  cr.set_line_width(10)
-  cr.set_line_cap(cairo.LINE_CAP_ROUND)
-  cr.arc(320 + m['x'], 240 + m['y'], 60, math.pi/4, math.pi*3/4)
-  cr.stroke()
+
+
+  # cr.set_source_rgb(1, 1, 0)
+  # cr.arc(320 + m['x'], 240 + m['y'],100, 0, 2*math.pi)
+  # cr.fill_preserve()
+
+  # cr.set_source_rgb(0, 0, 0)
+  # cr.stroke()
+
+  # cr.arc(280 + m['x'], 210 + m['y'],20, 0, 2*math.pi)
+  # cr.arc(360 + m['x'], 210 + m['y'],20, 0, 2*math.pi)
+  # cr.fill()
+
+  # cr.set_line_width(10)
+  # cr.set_line_cap(cairo.LINE_CAP_ROUND)
+  # cr.arc(320 + m['x'], 240 + m['y'], 60, math.pi/4, math.pi*3/4)
+  # cr.stroke()
 
 
 def on_app_activate(app):
