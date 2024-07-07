@@ -129,24 +129,31 @@ def on_draw(w, cr, width, height, user_data=None):
   global m
   # Cr is a https://pycairo.readthedocs.io/en/latest/reference/context.html
 
-  m['x'] = int(m['controller'].get('3', 127 // 2)) - (127 // 2) # 3 is our first slider
-  m['y'] = int(m['controller'].get('4', 127 // 2)) - (127 // 2) # 4 is our 2nd
+  # m['x'] = int(m['controller'].get('3', 127 // 2)) - (127 // 2) # 3 is our first slider
+  # m['y'] = int(m['controller'].get('4', 127 // 2)) - (127 // 2) # 4 is our 2nd
+
+  m['x'] = int(m['controller'].get('3', 127 // 2)) # 3 is our first slider
+  m['y'] = int(m['controller'].get('4', 127 // 2)) # 4 is our 2nd
 
   def px_func(x, y):
     global m
-    if x > m['x'] and y > m['y']:
-      return True
-    return False
+    if x == m['x'] and y == m['y']:
+      return (1, 0, 0)
+
+    if x == m['x'] or y == m['y']:
+      return (0, 1, 0)
+    return None
 
   # This draws
   cr.set_source_rgb(0, 0, 0)
   for img_x in range(0, 440):
     for img_y in range(0, 440):
-      if px_func(img_x, img_y):
-        #cr.new_path()
-        #cr.move_to(img_x, img_y)
-        cr.rectangle(img_x, img_y, 1, 1)
-        cr.fill()
+      px_data = px_func(img_x, img_y)
+      if px_data is None:
+        continue
+      cr.set_source_rgb(*px_data)
+      cr.rectangle(img_x, img_y, 1, 1)
+      cr.fill()
 
 
 
